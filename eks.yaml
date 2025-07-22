@@ -1,0 +1,35 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: ecommerce-application
+  region: us-west-2
+  version: "1.29"
+
+vpc:
+  subnets:
+    private:
+      subnet-a:
+        id: subnet-01a55f5c01757ca4b
+      subnet-b:
+        id: subnet-0e6c7a21900a86e7d
+      subnet-c:
+        id: subnet-024696919643ea935
+      subnet-d:
+        id: subnet-0a740d70bb30438f7
+      subnet-e:
+        id: subnet-01798dd35b37b211a
+
+managedNodeGroups:
+  - name: standard-workers
+    instanceType: t3.medium
+    desiredCapacity: 2
+    minSize: 1
+    maxSize: 3
+    subnets:
+      - subnet-01a55f5c01757ca4b
+      - subnet-0e6c7a21900a86e7d
+      - subnet-024696919643ea935
+      - subnet-0a740d70bb30438f7
+      - subnet-01798dd35b37b211a
+    privateNetworking: true

@@ -1,0 +1,43 @@
+#user-service.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-service-config
+data:
+  PORT: "3001"
+  MONGODB_URI: "mongodb+srv://amolkhetan:fhcj60zmtKUsdXcZ@amol-cluster.smlmwf1.mongodb.net/ecommerce_users"
+  JWT_SECRET: "your-jwt-secret-key"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - name: user-service
+          image: iampraveen6/user-service
+          ports:
+            - containerPort: 3001
+          envFrom:
+            - configMapRef:
+                name: user-service-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+spec:
+  selector:
+    app: user-service
+  ports:
+    - port: 3001
+      targetPort: 3001

@@ -1,0 +1,8 @@
+FROM node:18
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+# env vars from your .env will be injected by Kubernetes via ConfigMaps/Secrets
+EXPOSE 3004
+CMD ["npm", "start"]

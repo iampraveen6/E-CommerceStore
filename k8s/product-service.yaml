@@ -1,0 +1,43 @@
+#product-service.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: product-service-config
+data:
+  PORT: "3001"
+  MONGODB_URI: "mongodb+srv://amolkhetan:fhcj60zmtKUsdXcZ@amol-cluster.smlmwf1.mongodb.net/ecommerce_products"
+  JWT_SECRET: "your-jwt-secret-key"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product-service
+  template:
+    metadata:
+      labels:
+        app: product-service
+    spec:
+      containers:
+        - name: product-service
+          image: iampraveen6/product-service
+          ports:
+            - containerPort: 3002
+          envFrom:
+            - configMapRef:
+                name: product-service-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-service
+spec:
+  selector:
+    app: product-service
+  ports:
+    - port: 3002
+      targetPort: 3002

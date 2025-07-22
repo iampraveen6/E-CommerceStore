@@ -1,0 +1,46 @@
+#cart-service.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cart-service-config
+data:
+  PORT: "3001"
+  MONGODB_URI: "mongodb+srv://amolkhetan:fhcj60zmtKUsdXcZ@amol-cluster.smlmwf1.mongodb.net/ecommerce_carts"
+  JWT_SECRET: "your-jwt-secret-key"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cart-service
+  template:
+    metadata:
+      labels:
+        app: cart-service
+    spec:
+      containers:
+        - name: cart-service
+          image: iampraveen6/cart-service
+          ports:
+            - containerPort: 3003
+          envFrom:
+            - configMapRef:
+                name: cart-service-config
+          env:
+            - name: PRODUCT_SERVICE_URL
+              value: "http://localhost:3002"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cart-service
+spec:
+  selector:
+    app: cart-service
+  ports:
+    - port: 3003
+      targetPort: 3003

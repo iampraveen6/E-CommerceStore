@@ -1,0 +1,50 @@
+#order-service.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: order-service-config
+data:
+  PORT: "3001"
+  MONGODB_URI: "mongodb+srv://amolkhetan:fhcj60zmtKUsdXcZ@amol-cluster.smlmwf1.mongodb.net/ecommerce_orders"
+  JWT_SECRET: "your-jwt-secret-key"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+    spec:
+      containers:
+        - name: order-service
+          image: iampraveen6/order-service
+          ports:
+            - containerPort: 3004
+          envFrom:
+            - configMapRef:
+                name: order-service-config
+          env:
+            - name: CART_SERVICE_URL
+              value: "http://localhost:3003"
+            - name: PRODUCT_SERVICE_URL
+              value: "http://localhost:3002"
+            - name: USER_SERVICE_URL
+              value: "http://localhost:3001"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+spec:
+  selector:
+    app: order-service
+  ports:
+    - port: 3004
+      targetPort: 3004
